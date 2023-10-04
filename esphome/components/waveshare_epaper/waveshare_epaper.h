@@ -90,6 +90,9 @@ class WaveshareEPaperTypeA : public WaveshareEPaper {
 
   void dump_config() override;
 
+  void initialize_for_IN_V2();
+  void display_for_IN_V2();
+
   void display() override;
 
   void deep_sleep() override {
@@ -108,6 +111,8 @@ class WaveshareEPaperTypeA : public WaveshareEPaper {
 
  protected:
   void write_lut_(const uint8_t *lut, uint8_t size);
+
+  void reset_for_IN_V2();
 
   int get_width_internal() override;
 

@@ -83,6 +83,8 @@ static const uint8_t PARTIAL_UPDATE_LUT_TTGO_B1[LUT_SIZE_TTGO_B1] = {
     0x18, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x0F, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
+// clang-format off
+// Disable formatting to preserve the same look as in Waveshare examples
 static const uint8_t PARTIAL_UPD_2IN9_LUT_SIZE = 159;
 static const uint8_t PARTIAL_UPD_2IN9_LUT[PARTIAL_UPD_2IN9_LUT_SIZE] =
 {
@@ -106,6 +108,7 @@ static const uint8_t PARTIAL_UPD_2IN9_LUT[PARTIAL_UPD_2IN9_LUT_SIZE] =
     0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x00, 0x00, 0x00,
     0x22, 0x17, 0x41, 0xB0, 0x32, 0x36,
 };
+// clang-format on
 
 void WaveshareEPaper::setup_pins_() {
   this->init_internal_(this->get_buffer_length_());
@@ -190,8 +193,8 @@ void WaveshareEPaper::on_safe_shutdown() { this->deep_sleep(); }
 //                          Type A
 // ========================================================
 
-void WaveshareEPaperTypeA::initialize_for_IN_V2() {
-  this->reset_for_IN_V2();
+void WaveshareEPaperTypeA::initialize_for_in_v2() {
+  this->reset_for_in_v2_();
   this->wait_until_idle_();
 
   this->command(0x12);  // SWRESET
@@ -216,11 +219,9 @@ void WaveshareEPaperTypeA::initialize_for_IN_V2() {
   this->data((this->get_height_internal() - 1) & 0xFF);
   this->data(((this->get_height_internal() - 1) >> 8) & 0xFF);
 
-
   this->command(0x21);
   this->data(0x00);
   this->data(0x80);
-
 
   // SetCursor(0, 0)
   this->command(0x4E);
@@ -233,9 +234,8 @@ void WaveshareEPaperTypeA::initialize_for_IN_V2() {
 }
 
 void WaveshareEPaperTypeA::initialize() {
-  if (this->model_ == WAVESHARE_EPAPER_2_9_IN_V2)
-  {
-    this->initialize_for_IN_V2();
+  if (this->model_ == WAVESHARE_EPAPER_2_9_IN_V2) {
+    this->initialize_for_in_v2();
     return;
   }
 
@@ -330,9 +330,8 @@ void WaveshareEPaperTypeA::dump_config() {
   LOG_UPDATE_INTERVAL(this);
 }
 
-void WaveshareEPaperTypeA::reset_for_IN_V2() {
-  if (this->reset_pin_ != nullptr)
-  {
+void WaveshareEPaperTypeA::reset_for_in_v2_() {
+  if (this->reset_pin_ != nullptr) {
     this->reset_pin_->digital_write(false);
     delay(reset_duration_);  // NOLINT
     this->reset_pin_->digital_write(true);
@@ -340,7 +339,7 @@ void WaveshareEPaperTypeA::reset_for_IN_V2() {
   }
 }
 
-void WaveshareEPaperTypeA::display_for_IN_V2() {
+void WaveshareEPaperTypeA::display_for_in_v2() {
   if (!this->wait_until_idle_()) {
     this->status_set_warning();
     ESP_LOGE(TAG, "fail idle 1");
@@ -362,9 +361,8 @@ void WaveshareEPaperTypeA::display_for_IN_V2() {
     return;
   }
 
-  //if (this->full_update_every_ == 1 ||
-  if (this->at_update_ == 0)
-  {
+  // if (this->full_update_every_ == 1 ||
+  if (this->at_update_ == 0) {
     // do base update
 
     this->command(0x24);
@@ -384,7 +382,7 @@ void WaveshareEPaperTypeA::display_for_IN_V2() {
   } else {
     // do partial update
 
-    this->reset_for_IN_V2();
+    this->reset_for_in_v2_();
 
     this->write_lut_(PARTIAL_UPD_2IN9_LUT, PARTIAL_UPD_2IN9_LUT_SIZE);
 
@@ -407,8 +405,7 @@ void WaveshareEPaperTypeA::display_for_IN_V2() {
     this->data(0xC0);
     this->command(0x20);
 
-    if (!this->wait_until_idle_())
-    {
+    if (!this->wait_until_idle_()) {
       ESP_LOGE(TAG, "fail idle 2");
     }
 
@@ -446,9 +443,8 @@ void WaveshareEPaperTypeA::display_for_IN_V2() {
 }
 
 void HOT WaveshareEPaperTypeA::display() {
-  if (this->model_ == WAVESHARE_EPAPER_2_9_IN_V2)
-  {
-    this->display_for_IN_V2();
+  if (this->model_ == WAVESHARE_EPAPER_2_9_IN_V2) {
+    this->display_for_in_v2();
     return;
   }
 
@@ -634,11 +630,8 @@ void WaveshareEPaperTypeA::write_lut_(const uint8_t *lut, const uint8_t size) {
     this->data(lut[i]);
 }
 
-WaveshareEPaperTypeA::WaveshareEPaperTypeA(WaveshareEPaperTypeAModel model)
-: model_(model)
-{
-  if (this->model_ == WAVESHARE_EPAPER_2_9_IN_V2)
-  {
+WaveshareEPaperTypeA::WaveshareEPaperTypeA(WaveshareEPaperTypeAModel model) : model_(model) {
+  if (this->model_ == WAVESHARE_EPAPER_2_9_IN_V2) {
     this->reset_duration_ = 10;
   }
 }
